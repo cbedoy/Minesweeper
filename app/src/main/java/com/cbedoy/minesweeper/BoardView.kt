@@ -33,31 +33,41 @@ fun BoardView(
             Toast.makeText(context, "Game over bro", Toast.LENGTH_SHORT).show()
         }
     }
-
     if (state.isGameOver) {
-        GameOverView {
-            minesViewModel.restartGame()
-        }
+        GameOverView(state) { minesViewModel.restartGame() }
         return
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(6),
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
-        userScrollEnabled = false,
-        content = {
-            items(state.mines.size) { index ->
-                val mine = state.mines[index]
-                MineView(mine) { minesViewModel.onTap(it) }
+    Column(Modifier.fillMaxSize().background(Color.Black)) {
+        StatsView(state)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(6),
+            modifier = Modifier
+                .fillMaxSize(),
+            userScrollEnabled = false,
+            content = {
+                items(state.mines.size) { index ->
+                    val mine = state.mines[index]
+                    MineView(mine) { minesViewModel.onTap(it) }
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
-fun GameOverView(onTap: () -> Unit) {
+fun StatsView(state: UiState) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(8.dp)) {
+        Text("Bombs found: ${state.bombCount}", color = Color.White)
+        Text("Points: ${state.points}", color = Color.White)
+    }
+}
+
+@Composable
+fun GameOverView(state: UiState, onTap: () -> Unit) {
     Surface(
         color = Color.Black.copy(alpha = 0.5f)
     ) {
@@ -71,6 +81,7 @@ fun GameOverView(onTap: () -> Unit) {
                 "So sorry bro! but you lost this game",
                 color = Color.White
             )
+            StatsView(state)
             Button(onClick = onTap) {
                 Text(text = "Restart game")
             }
