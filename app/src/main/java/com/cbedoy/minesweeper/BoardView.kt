@@ -3,11 +3,12 @@ package com.cbedoy.minesweeper
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -33,6 +34,13 @@ fun BoardView(
         }
     }
 
+    if (state.isGameOver) {
+        GameOverView {
+            minesViewModel.restartGame()
+        }
+        return
+    }
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(6),
         modifier = Modifier
@@ -46,6 +54,28 @@ fun BoardView(
             }
         }
     )
+}
+
+@Composable
+fun GameOverView(onTap: () -> Unit) {
+    Surface(
+        color = Color.Black.copy(alpha = 0.5f)
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            Arrangement.Center
+        ) {
+            Text(
+                "So sorry bro! but you lost this game",
+                color = Color.White
+            )
+            Button(onClick = onTap) {
+                Text(text = "Restart game")
+            }
+        }
+    }
 }
 
 @Composable

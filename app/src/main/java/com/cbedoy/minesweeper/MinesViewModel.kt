@@ -17,10 +17,12 @@ class MinesViewModel : ViewModel(){
     val state get() = _state.asStateFlow()
 
     init {
+        initGame()
+    }
+
+    private fun initGame() {
         val mines = (1..66).map { Mine(it % 6 == 0) }
-        _state.update {
-            it.copy(mines = mines.shuffled())
-        }
+        _state.value = UiState(mines.shuffled())
     }
 
     fun onTap(mine: Mine) {
@@ -30,5 +32,9 @@ class MinesViewModel : ViewModel(){
                 bombCount = if (mine.hasABomb) state.bombCount + 1 else state.bombCount
             )
         }
+    }
+
+    fun restartGame() {
+        initGame()
     }
 }
